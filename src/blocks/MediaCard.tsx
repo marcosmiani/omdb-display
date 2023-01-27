@@ -9,6 +9,7 @@ import {
   Skeleton,
   Box,
   Collapse,
+  Badge,
   AspectRatio,
 } from "@chakra-ui/react";
 import { ViewOffIcon } from '@chakra-ui/icons'
@@ -16,12 +17,13 @@ import { useState } from "react";
 
 import { useNavigate } from "react-router-dom";
 
-export type Movie = {
+export type Media = {
   Title: string;
   Year: string;
   imdbID: string;
   Type: string;
   Poster: string;
+  imdbRating: string;
 };
 
 export const SkeletonCard = ({ loading }: { loading: boolean }) => {
@@ -47,15 +49,15 @@ export const SkeletonCard = ({ loading }: { loading: boolean }) => {
   );
 }
 
-function MovieCard(movie: Movie) {
+function MediaCard(media: Media) {
   // todo fix empy images
   const navigate = useNavigate();
-  const [src, setSrc] = useState<string>(movie?.Poster)
+  const [src, setSrc] = useState<string>(media?.Poster)
   return (
     <Card
       maxW="sm"
       onClick={() => {
-        navigate(`/detail/${movie?.imdbID}`)
+        navigate(`/detail/${media?.imdbID}`)
       }}
     >
       <AspectRatio ratio={11 / 16}>
@@ -65,22 +67,32 @@ function MovieCard(movie: Movie) {
             onError={() => setSrc('')}
             srcSet={src}
             loading="lazy"
-            alt={movie?.Title}
+            alt={media?.Title}
             borderRadius="xs"
           />}
           {!src && <ViewOffIcon boxSize={8} />}
+          {media?.imdbRating && <Badge
+            colorScheme='green'
+            sx={{
+              position: 'absolute',
+              bottom: 0,
+              right: 0
+            }}
+          >
+            {media?.imdbRating}
+          </Badge>}
         </Box>
       </AspectRatio>
       <CardBody p={2}>
         <VStack spacing="0" alignItems={"start"}>
           <Heading size="xs" noOfLines={1} width="100%">
-            {movie?.Title}
+            {media?.Title}
           </Heading>
           <HStack spacing="3" textAlign={"right"}>
             <Text color="blue.600" fontSize="bg">
-              {movie?.Year}
+              {media?.Year}
             </Text>
-            <Text>{movie?.Type}</Text>
+            <Text>{media?.Type}</Text>
           </HStack>
         </VStack>
       </CardBody>
@@ -88,4 +100,4 @@ function MovieCard(movie: Movie) {
   );
 }
 
-export default MovieCard;
+export default MediaCard;

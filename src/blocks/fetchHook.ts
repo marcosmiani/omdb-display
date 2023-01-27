@@ -1,38 +1,40 @@
 import { useState } from "react";
-import debounce from 'lodash/debounce';
 
-const DEBOUNCE_TIME = 100;
+const DEBOUNCE_TIME = 500;
 export const DEFAULT_TOKEN = '6c3a2d45';
 
-export type FetchHookAPI<DataType> = [boolean, Error | undefined, DataType | undefined, (query: string) => Promise<void>]
+const debounceMap = new Map();
 
-export function useFetchData<DataType>(): FetchHookAPI<DataType> {
+const debounce = (fnc: Function, id: string) => {
+  if (debounceMap.get(id)) clearTimeout(debounceMap.get(id))
+  debounceMap.set(id, setTimeout(fnc, DEBOUNCE_TIME))
+}
+
+export type FetchHookAPI<DataType> = [boolean, Error | undefined, DataType | undefined, () => void]
+
+export function useFetchData<DataType>(url: string, id?: string): FetchHookAPI<DataType> {
   const [data, setData] = useState<DataType>();
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error>();
 
-  const fetchData = debounce(async (url: string) => await fetch(
-    url
-  ).then(async (response) => {
-    const detail: DataType = await response.json();
-    setTimeout(() => {
-      setData(detail);
-      setLoading(false);
-    }, 1000)
-  }).catch(err => {
-    setError(err);
-    setLoading(false);
-  }), DEBOUNCE_TIME, {
-    'leading': true,
-    'trailing': false
-  })
+  const cacheId = id || url
 
-  const getData = async (url: string) => {
-    if (!loading) {
-      setLoading(true);
-      fetchData(url);
-    }
+  const fetchData = () => {
+    setLoading(true);
+    debounce(() =>
+      fetch(
+        url
+      ).then(async (response) => {
+        const detail: DataType = await response.json();
+        setData(detail);
+        setLoading(false);
+      }).catch(err => {
+        setError(err);
+        setLoading(false);
+      }),
+      cacheId
+    )
   }
-
-  return [loading, error, data, getData];
+  
+  return [loading, error, data, fetchData];
 }

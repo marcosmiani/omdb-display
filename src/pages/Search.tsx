@@ -5,13 +5,13 @@ import { ArrowBackIcon } from '@chakra-ui/icons'
 
 import { useFetchData, DEFAULT_TOKEN } from '../blocks/fetchHook';
 import Header from '../blocks/Header';
-import MovieGrid from '../blocks/MovieGrid';
+import MediaGrid from '../blocks/MediaGrid';
 import SearchBar from '../blocks/SearchBar';
-import { Movie } from '../blocks/MovieCard';
+import { Media } from '../blocks/MediaCard';
 
 
-export type MovieList = {
-  "Search": Movie[],
+export type MediaList = {
+  "Search": Media[],
   "TotalResults": Number
 }
 
@@ -22,11 +22,14 @@ export type SearchAPI = {
 const Search = () => {
   const { criteria } = useParams()
   const [search, setSearch] = useState<string | null>(criteria || null)
-  const [loading, error, movies, getList] = useFetchData<MovieList>()
+  const [loading, error, media, getList] = useFetchData<MediaList>(
+    `https://www.omdbapi.com/?s=${search}&apiKey=${DEFAULT_TOKEN}`,
+    'search'
+  )
   const navigate = useNavigate()
   
   useEffect(() => {
-    if (!!search) getList(`https://www.omdbapi.com/?s=${search}&apiKey=${DEFAULT_TOKEN}`)
+    if (!!search) getList()
   }, [search])
 
   return (
@@ -47,7 +50,7 @@ const Search = () => {
           navigate(`/search/${value}`, { replace: true })
         }} />
       </Header>
-      {search !== null && <MovieGrid movies={movies} loading={loading} error={error} />}
+      {search !== null && <MediaGrid media={media} loading={loading} error={error} />}
     </VStack>
   );
 }

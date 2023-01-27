@@ -5,14 +5,14 @@ import {
   Heading,
   Fade
 } from '@chakra-ui/react';
-import MovieCard, { SkeletonCard, Movie } from './MovieCard';
+import MediaCard, { SkeletonCard, Media } from './MediaCard';
 
-export type MovieList = {
-  "Search": Movie[],
+export type MediaList = {
+  "Search": Media[],
   "TotalResults": Number
 }
 
-function MovieGrid({ movies, loading, error }: { movies?: MovieList, loading: boolean, error?: Error }) {
+function MediaGrid({ media, loading, error }: { media?: MediaList, loading: boolean, error?: Error }) {
   return (
     <Box flexGrow='1' w={'100%'} padding={2}>
       <SimpleGrid
@@ -23,11 +23,11 @@ function MovieGrid({ movies, loading, error }: { movies?: MovieList, loading: bo
         }}
       >
         {([1, 2, 3, 4, 5, 6]).map((_, i) => <SkeletonCard key={i} loading={loading} />)}
-        {!loading && movies?.Search?.map((movie: Movie) =>
-          <MovieCard key={movie.imdbID} {...movie} />
+        {!loading && media?.Search?.map((mediaItem: Media) =>
+          <MediaCard key={mediaItem.imdbID} {...mediaItem} />
         )}
-        {!loading && !movies?.Search?.length && <Heading as="h2" textAlign={'center'} >
-          No movies found
+        {!loading && !media?.Search?.length && <Heading as="h2" textAlign={'center'} >
+          No media found
         </Heading>}
         {error && <Heading as="h2" textAlign={'center'} >
           Error!
@@ -37,4 +37,4 @@ function MovieGrid({ movies, loading, error }: { movies?: MovieList, loading: bo
   );
 }
 
-export default MovieGrid;
+export default MediaGrid;
