@@ -10,6 +10,11 @@ const debounce = (fnc: Function, id: string) => {
   debounceMap.set(id, setTimeout(fnc, DEBOUNCE_TIME))
 }
 
+export type ErrorType = {
+  Error: string,
+  Response: string
+}
+
 export type FetchHookAPI<DataType> = [boolean, Error | undefined, DataType | undefined, () => void]
 
 export function useFetchData<DataType>(url: string, id?: string): FetchHookAPI<DataType> {
@@ -25,8 +30,12 @@ export function useFetchData<DataType>(url: string, id?: string): FetchHookAPI<D
       fetch(
         url
       ).then(async (response) => {
-        const detail: DataType = await response.json();
-        setData(detail);
+        const detail: DataType & ErrorType = await response.json();
+        if (detail.Response === 'False') {
+          setError(new Error(detail.Error))  
+        } else {
+          setData(detail);
+        }
         setLoading(false);
       }).catch(err => {
         setError(err);
