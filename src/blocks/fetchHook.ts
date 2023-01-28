@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 const DEBOUNCE_TIME = 500
-export const DEFAULT_TOKEN = '6c3a2d45'
+export const DEFAULT_TOKEN = import.meta.env.VITE_API_TOKEN
 
 const debounceMap = new Map()
 

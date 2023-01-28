@@ -16,14 +16,18 @@ Some improvements were left out (from the top of my head):
 - Revamp fonts and spacing to improve the UX feel.
 - Cache on fetching: re-fetching data that probably didnt get updated is a bit wasteful, even if the pages are the info is relatively small.
 - Variable and component naming: Media was the simpliest definition for _something that can be a movie or a TV show_ but given a bit more of time im sure that there is a better word for it.
-- Set up the URL key securely: set it up on an environment variable and use an URL lib. Just overall cleaniness.
 
 ## Base set up
 
+Go to the `.env` file and set up an API token for example `6c3a3d45` (this one is not a valid token! but It should!)
+
+### Install dependencies
 `yarn install`
 
+### Run it!
 For local environment
 `yarn dev`
 
+### Build and use
 For build and later deploy somewhere
 `yarn build` and `yarn preview` (runs a server using the dist folder generated from the build)

@@ -54,8 +54,8 @@ const baseTextPartStyle = {
   minH: 5,
   ml: { base: '0', sm: '5' },
   mt: 0,
-  mb: 5,
-  w: { base: '50%' }
+  mb: 2,
+  w: { base: 'calc(100% - 32px)' }
 }
 
 const Poster: React.FunctionComponent<{ poster?: string, title?: string, loading: boolean }> = ({ poster, title, loading }) => {
@@ -133,8 +133,8 @@ const Plot: React.FunctionComponent<{ loading: boolean, plot?: string, type?: 'f
   return (
     <Skeleton sx={{
       h: 'auto',
-      minW: { base: '100%', sm: 'calc(100% - 16px)' },
-      maxW: { base: '100%', sm: 'calc(100% - 16px)' },
+      minW: { base: '100%', sm: 'calc(100% - 32px)' },
+      maxW: { base: '100%', sm: 'calc(100% - 32px)' },
       minH: { base: '70px', md: '100px' },
       mb: '16px'
     }} isLoaded={!loading}>
@@ -180,23 +180,27 @@ const MediaDetail: React.FunctionComponent<{ mediaID?: string, display?: 'compac
   return (
     <ErrorHandler error={error}>
       <Flex
-        w={'100%'}
-        h={'100%'}
-        wrap={'wrap'}
-        alignItems={'start'}
-        justifyContent='start'
-        minW={{ base: '350px', sm: '450px' }}
-        p='2'
+        sx={{
+          w: '100%',
+          h: '100%',
+          flexWrap: 'wrap',
+          alignItems: 'start',
+          justifyContent: 'start',
+          minW: { base: '350px', sm: '450px' },
+          p: '2'
+        }}
       >
         <Poster title={media?.Title} poster={media?.Poster} loading={loading} />
 
         <Flex
-          w={{ base: '100%', sm: '60%' }}
-          maxW={{ base: '500px' }}
-          alignItems={'start'}
-          flexDirection={'column'}
-          flexGrow={1}
-          mt='5'
+          sx={{
+            w: { base: '100%', sm: '60%' },
+            maxW: { base: '500px' },
+            alignItems: 'start',
+            flexDirection: 'column',
+            flexGrow: 1,
+            mt: 5
+          }}
         >
           <Skeleton sx={baseTextPartStyle} isLoaded={!loading}>
             <Heading
@@ -229,23 +233,28 @@ const MediaDetail: React.FunctionComponent<{ mediaID?: string, display?: 'compac
           </Skeleton>}
         </Flex>
         {fullDisplay && <Flex
-          w={{ base: '100%' }}
-          alignItems={'start'}
-          flexDirection={'row'}
-          flexGrow={1}
-          mt='5'
+          sx={{
+            w: { base: '100%' },
+            alignItems: 'start',
+            flexDirection: 'row',
+            flexGrow: 1,
+            mt: '5'
+          }}
         >
           <Actors actors={media?.Actors} loading={loading} />
           <Writers writers={media?.Writer} loading={loading} />
         </Flex>}
 
         <Flex
-          w={{ base: '100%' }}
-          h={{ base: '100%' }}
-          alignItems={'start'}
-          flexDirection={'column'}
-          flexGrow={1}
-          mt='5'
+          sx={{
+            w: { base: 'calc(100% - 32px)' },
+            maxW: { base: 'calc(100% - 32px)' },
+            h: { base: '100%' },
+            alignItems: 'start',
+            flexDirection: 'column',
+            flexGrow: 1,
+            mt: '2'
+          }}
         >
           <Plot
             plot={media?.Plot}

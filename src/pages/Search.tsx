@@ -82,7 +82,7 @@ const Search: React.FunctionComponent = () => {
               }}
             >
               {mediaCollection.map((mediaItem: Media | { imdbID: string }) =>
-                <Card key={mediaItem.imdbID}>
+                <Card p='2' key={mediaItem.imdbID}>
                   <MediaDetail mediaID={mediaItem.imdbID} forcedLoading={loading} display='full' plotType={plotType} />
                 </Card>
               )}
