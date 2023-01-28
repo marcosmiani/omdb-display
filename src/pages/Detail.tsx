@@ -1,15 +1,12 @@
-import { useEffect } from 'react'
+import React from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import {
-  Flex,
-  IconButton
-} from '@chakra-ui/react'
+import { Flex, IconButton } from '@chakra-ui/react'
 import { ArrowBackIcon } from '@chakra-ui/icons'
 
 import MediaDetail from '../blocks/MediaDetail'
 import Header from '../blocks/Header'
 
-const MediaCard = () => {
+const MediaCard: React.FunctionComponent = () => {
   const params = useParams()
   const navigate = useNavigate()
   // todo add more details

@@ -1,15 +1,13 @@
+import React from 'react'
 import { Box } from '@chakra-ui/react'
 import { Routes, Route } from 'react-router-dom'
 
 import Detail from './pages/Detail'
 import Search from './pages/Search'
 import Featured from './pages/Featured'
+import NotFound from './pages/NotFound'
 
-function NoMatch () {
-  return <div>NOT FOUND</div>
-}
-
-function App () {
+const App: React.FunctionComponent = () => {
   return (
     <Box
       sx={{
@@ -24,7 +22,7 @@ function App () {
         <Route path='/search/' element={<Search />} />
         <Route path='/search/:criteria' element={<Search />} />
         <Route path='/detail/:imdbid' element={<Detail />} />
-        <Route path='*' element={<NoMatch />} />
+        <Route path='*' element={<NotFound />} />
       </Routes>
     </Box>
   )

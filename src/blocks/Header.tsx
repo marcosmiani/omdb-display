@@ -1,8 +1,5 @@
-import {
-  Box,
-  Flex,
-} from '@chakra-ui/react'
-import React from 'react';
+import React from 'react'
+import { Flex } from '@chakra-ui/react'
 
 const Header: React.FunctionComponent<{ children?: React.ReactNode }> = ({ children }) => {
   return (
@@ -17,7 +14,7 @@ const Header: React.FunctionComponent<{ children?: React.ReactNode }> = ({ child
     >
       {children}
     </Flex>
-  );
+  )
 }
 
-export default Header;
+export default Header

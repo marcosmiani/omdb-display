@@ -1,14 +1,14 @@
-import { VStack, IconButton, Heading, Flex, Box  } from '@chakra-ui/react'
+import React from 'react'
+import { VStack, IconButton, Heading, Flex, Box } from '@chakra-ui/react'
 import { Search2Icon, StarIcon } from '@chakra-ui/icons'
-import { useNavigate } from "react-router-dom"
+import { useNavigate } from 'react-router-dom'
 
-import Header from '../blocks/Header';
-import MediaDetail from "../blocks/MediaDetail";
+import Header from '../blocks/Header'
+import MediaDetail from '../blocks/MediaDetail'
 
+const FEATURED_ITEMS = ['tt0266987', 'tt1340800']
 
-const FEATURED_ITEMS = ['tt0266987','tt1340800']
-
-const FeaturedMedia = ({ mediaID }: { mediaID: string }) => {
+const FeaturedMedia: React.FunctionComponent<{ mediaID: string }> = ({ mediaID }) => {
   return (<Box
     maxW={{ base: '100%', sm: '50%' }}
     flexGrow='1'
@@ -17,8 +17,8 @@ const FeaturedMedia = ({ mediaID }: { mediaID: string }) => {
   </Box>)
 }
 
-const Featured = () => {
-  let navigate = useNavigate();
+const Featured: React.FunctionComponent = () => {
+  const navigate = useNavigate()
 
   return (
     <VStack
@@ -44,7 +44,7 @@ const Featured = () => {
         {FEATURED_ITEMS.map(id => <FeaturedMedia key={id} mediaID={id} />)}
       </Flex>
     </VStack>
-  );
+  )
 }
 
 export default Featured

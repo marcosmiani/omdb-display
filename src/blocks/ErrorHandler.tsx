@@ -1,22 +1,22 @@
+import React from 'react'
 import {
   Alert,
   AlertTitle,
   AlertDescription,
-  AlertIcon,
+  AlertIcon
 } from '@chakra-ui/react'
-import React from 'react';
 
 const ErrorHandler: React.FunctionComponent<{ error?: Error, children?: React.ReactNode }> = ({ error, children }) => {
   return (
     <>
-      {!error && children}
-      {error && <Alert status='error'>
+      {(error === null || error === undefined) && children}
+      {(error !== null && error !== undefined) && <Alert status='error'>
         <AlertIcon />
         <AlertTitle>Oh no!</AlertTitle>
-        <AlertDescription>{error.message}</AlertDescription>
+        <AlertDescription>{error?.message}</AlertDescription>
       </Alert>}
     </>
-  );
+  )
 }
 
-export default ErrorHandler;
+export default ErrorHandler

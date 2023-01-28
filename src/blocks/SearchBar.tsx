@@ -1,4 +1,4 @@
-import { ChangeEvent, useRef, useEffect, useState } from "react";
+import React, { type ChangeEvent, useRef, useEffect } from 'react'
 import {
   Flex,
   Input,
@@ -14,10 +14,9 @@ import { Search2Icon } from '@chakra-ui/icons'
 
 export type PlotType = 'full' | 'short'
 
-function Header(
-  { search, plotType, onChange }:
-    { search: string, plotType: PlotType, onChange?: (value: string, plotType: PlotType) => void }
-) {
+const Header: React.FunctionComponent<{ search: string, plotType: PlotType, onChange?: (value: string, plotType: PlotType) => void }> = (
+  { search, plotType, onChange }
+) => {
   const inputRef = useRef<HTMLInputElement>(null)
   useEffect(() => {
     inputRef?.current?.focus?.()
@@ -25,7 +24,7 @@ function Header(
 
   return (
     <Flex maxW={'100%'} minW='10' wrap={'wrap'} flexGrow='1'>
-      {onChange &&
+      {(onChange != null) &&
         <InputGroup>
           <Input
             ref={inputRef}
@@ -38,32 +37,31 @@ function Header(
           />
           <InputRightElement
             w='150px'
-            children={
-              <Flex flexDirection='row' minW={'100px'} alignItems='center'>  
-                <Search2Icon color='green.500' />
-                <FormControl display='flex' alignItems='center' ml='2'>
-                  <FormLabel htmlFor='plot-type' mb='0' fontSize='xs'>
-                    Full plot?
-                  </FormLabel>
-                  <Switch
-                    id='plot-type'
-                    size='sm'
-                    onChange={() => onChange(search, plotType === 'full' ? 'short' : 'full')}
-                    isChecked={plotType === 'full'} 
-                  />
-                </FormControl>
-              </Flex>
-            }
-          />
+          >
+            <Flex flexDirection='row' minW={'100px'} alignItems='center'>
+              <Search2Icon color='green.500' />
+              <FormControl display='flex' alignItems='center' ml='2'>
+                <FormLabel htmlFor='plot-type' mb='0' fontSize='xs'>
+                  Full plot?
+                </FormLabel>
+                <Switch
+                  id='plot-type'
+                  size='sm'
+                  onChange={() => { onChange(search, plotType === 'full' ? 'short' : 'full') }}
+                  isChecked={plotType === 'full'}
+                />
+              </FormControl>
+            </Flex>
+          </InputRightElement>
         </InputGroup>
       }
-      <Collapse startingHeight={0} in={!search}>
+      <Collapse startingHeight={0} in={search === null || search === ''}>
         <Heading as="h2" minW='100%'>
           Whatcha feeling like watching?
         </Heading>
       </Collapse>
     </Flex>
-  );
+  )
 }
 
-export default Header;
+export default Header

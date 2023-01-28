@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react'
 import {
   Image,
   Heading,
@@ -10,47 +11,43 @@ import {
   List,
   ListItem,
   ListIcon,
-  FormControl,
-  FormLabel,
-  Switch,
   IconButton
-} from "@chakra-ui/react";
+} from '@chakra-ui/react'
 import { ViewOffIcon, ChevronDownIcon, ChevronUpIcon, StarIcon, EditIcon } from '@chakra-ui/icons'
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom'
 
-import { useFetchData, DEFAULT_TOKEN } from './fetchHook';
-import ErrorHandler from "./ErrorHandler";
-import { PlotType } from "./SearchBar";
+import { useFetchData, DEFAULT_TOKEN } from './fetchHook'
+import ErrorHandler from './ErrorHandler'
+import { type PlotType } from './SearchBar'
 
-export type MediaWithDetail = { 
-  Title: string,
-  Year: string,
-  Rated: string,
-  Released: string,
-  Runtime: string,
-  Genre: string,
-  Director: string,
-  Writer: string,
-  Actors: string,
-  Plot: string,
-  Language: string,
-  Country: string,
-  Awards: string,
-  Poster: string, 
+export interface MediaWithDetail {
+  Title: string
+  Year: string
+  Rated: string
+  Released: string
+  Runtime: string
+  Genre: string
+  Director: string
+  Writer: string
+  Actors: string
+  Plot: string
+  Language: string
+  Country: string
+  Awards: string
+  Poster: string
   Ratings: [
     { Source: string, Value: string }
-  ],
-  Metascore: string, 
-  imdbRating: string,
-  imdbVotes: string,
-  imdbID: string, 
-  Type: string, 
-  DVD?: string, 
-  BoxOffice?: string,
-  Production?: string, 
-  Website?: string, 
-  Response?: string 
+  ]
+  Metascore: string
+  imdbRating: string
+  imdbVotes: string
+  imdbID: string
+  Type: string
+  DVD?: string
+  BoxOffice?: string
+  Production?: string
+  Website?: string
+  Response?: string
 }
 
 const baseTextPartStyle = {
@@ -61,9 +58,9 @@ const baseTextPartStyle = {
   w: { base: '50%' }
 }
 
-const Poster = ({ poster, title, loading }: { poster?: string, title?: string, loading?: boolean }) => {
-  const [src, setSrc] = useState<string | undefined>(poster || '')
-  
+const Poster: React.FunctionComponent<{ poster?: string, title?: string, loading: boolean }> = ({ poster, title, loading }) => {
+  const [src, setSrc] = useState<string | undefined>(poster ?? '')
+
   useEffect(() => {
     setSrc(poster)
   }, [poster])
@@ -71,27 +68,28 @@ const Poster = ({ poster, title, loading }: { poster?: string, title?: string, l
   return (<Box w={{ base: '100%', sm: '40%' }} maxH='445px' maxW='300px'>
     <AspectRatio ratio={11 / 16}>
       <Skeleton h="100%" w='100%' isLoaded={!loading} >
-        {src && <Image
-          src={src}
-          onError={() => setSrc('')}
-          srcSet={src}
-          loading="lazy"
-          alt={title}
-          borderRadius="xs"
-        />}
-        {!src && <ViewOffIcon boxSize={8} />}
+        {src !== ''
+          ? <Image
+            src={src}
+            onError={() => { setSrc('') }}
+            srcSet={src}
+            loading="lazy"
+            alt={title}
+            borderRadius="xs"
+          />
+          : <ViewOffIcon boxSize={8} />}
       </Skeleton>
     </AspectRatio>
   </Box>)
 }
 
-const Writers = ({ writers, loading }: { writers?: string, loading: boolean }) => {
-  const writerCollection: string[] | undefined = writers?.split(/\,\s/ig)
+const Writers: React.FunctionComponent<{ writers?: string, loading: boolean }> = ({ writers, loading }) => {
+  const writerCollection: string[] | undefined = writers?.split(/,\s/ig)
 
-  return (<Skeleton 
+  return (<Skeleton
     sx={{
       ...baseTextPartStyle,
-      w: { base: 'calc(50% - 16px)' },
+      w: { base: 'calc(50% - 16px)' }
     }}
     isLoaded={!loading}
   >
@@ -105,14 +103,14 @@ const Writers = ({ writers, loading }: { writers?: string, loading: boolean }) =
   </Skeleton>)
 }
 
-const Actors = ({ actors, loading }: { actors?: string, loading: boolean }) => {
-  const actorsCollection: string[] | undefined = actors?.split(/\,\s/ig)
+const Actors: React.FunctionComponent<{ actors?: string, loading: boolean }> = ({ actors, loading }) => {
+  const actorsCollection: string[] | undefined = actors?.split(/,\s/ig)
 
   return (<Skeleton
     sx={{
       ...baseTextPartStyle,
       maxW: { base: 'calc(50% - 50px)' },
-      ml: 0,
+      ml: 0
     }}
     isLoaded={!loading}
     >
@@ -123,14 +121,13 @@ const Actors = ({ actors, loading }: { actors?: string, loading: boolean }) => {
           <ListIcon as={StarIcon}></ListIcon>
           <Text as='span' fontSize='xs'>{actor}</Text>
         </ListItem>
-    ))}</List>
+      ))}</List>
   </Skeleton>)
 }
 
-const Plot = (
-  { loading, plot, type = 'short' }:
-  { loading: boolean, plot?: string, type?: 'full' | 'short', onChangeType?: () => void }
-) => {
+const Plot: React.FunctionComponent<{ loading: boolean, plot?: string, type?: 'full' | 'short' }> = ({
+  loading, plot, type = 'short'
+}) => {
   const [more, setMore] = useState<boolean>(false)
 
   return (
@@ -148,39 +145,37 @@ const Plot = (
         {type !== 'short' && <IconButton
           aria-label='See more / See less'
           icon={more ? <ChevronUpIcon /> : <ChevronDownIcon />}
-          onClick={() => setMore(!more)}
+          onClick={() => { setMore(!more) }}
           variant={'ghost'}
         />}
       </Flex>
     </Skeleton>)
 }
 
-const getColorByRate = (rate?: string) => {
-  const rating = parseInt(rate || '0', 10)
+const getColorByRate = (rate?: string): string => {
+  const rating = parseInt(rate ?? '0', 10)
   if (rating >= 7) return 'green'
   if (rating >= 5) return 'purple'
   return 'red'
 }
 
-const MediaDetail = (
-  { mediaID, display = 'compact', plotType = 'short', forcedLoading = false }:
-  { mediaID?: string, display?: 'compact' | 'full', plotType?: PlotType, forcedLoading?: boolean }
+const MediaDetail: React.FunctionComponent<{ mediaID?: string, display?: 'compact' | 'full', plotType?: PlotType, forcedLoading?: boolean }> = (
+  { mediaID, display = 'compact', plotType = 'short', forcedLoading = false }
 ) => {
-  // TODO Control errors: error handler component?
   const [mediaIsLoading, error, media, getMedia] = useFetchData<MediaWithDetail>(
-    `https://www.omdbapi.com/?i=${mediaID}&plot=${plotType}&apiKey=${DEFAULT_TOKEN}`
+    `https://www.omdbapi.com/?i=${mediaID ?? ''}&plot=${plotType}&apiKey=${DEFAULT_TOKEN}`
   )
 
-  let navigate = useNavigate();
+  const navigate = useNavigate()
 
   useEffect(() => {
-    if (mediaID && !forcedLoading) {
+    if (mediaID !== undefined && !forcedLoading) {
       getMedia()
     }
   }, [plotType, mediaID, forcedLoading])
 
   const fullDisplay = display === 'full'
-  const loading = !media || mediaIsLoading || forcedLoading
+  const loading = (media == null) || mediaIsLoading || forcedLoading
 
   return (
     <ErrorHandler error={error}>
@@ -188,17 +183,17 @@ const MediaDetail = (
         w={'100%'}
         h={'100%'}
         wrap={'wrap'}
-        alignItems={"start"}
+        alignItems={'start'}
         justifyContent='start'
-        minW={{base: '350px', sm: '450px'}}
+        minW={{ base: '350px', sm: '450px' }}
         p='2'
       >
         <Poster title={media?.Title} poster={media?.Poster} loading={loading} />
-        
+
         <Flex
           w={{ base: '100%', sm: '60%' }}
-          maxW={{ base: '500px'}}
-          alignItems={"start"}
+          maxW={{ base: '500px' }}
+          alignItems={'start'}
           flexDirection={'column'}
           flexGrow={1}
           mt='5'
@@ -207,7 +202,7 @@ const MediaDetail = (
             <Heading
               size="lg"
               noOfLines={1}
-              onClick={() => navigate(`/detail/${media?.imdbID}`)}
+              onClick={() => { navigate(`/detail/${media?.imdbID ?? ''}`) }}
               sx={{ cursor: 'pointer' }}
             >
               {media?.Title}
@@ -235,7 +230,7 @@ const MediaDetail = (
         </Flex>
         {fullDisplay && <Flex
           w={{ base: '100%' }}
-          alignItems={"start"}
+          alignItems={'start'}
           flexDirection={'row'}
           flexGrow={1}
           mt='5'
@@ -243,11 +238,11 @@ const MediaDetail = (
           <Actors actors={media?.Actors} loading={loading} />
           <Writers writers={media?.Writer} loading={loading} />
         </Flex>}
-        
+
         <Flex
           w={{ base: '100%' }}
-          h={{base: '100%' }}
-          alignItems={"start"}
+          h={{ base: '100%' }}
+          alignItems={'start'}
           flexDirection={'column'}
           flexGrow={1}
           mt='5'
@@ -258,10 +253,10 @@ const MediaDetail = (
             type={plotType}
           />
         </Flex>
-        
+
       </Flex>
     </ErrorHandler>
-  );
+  )
 }
 
-export default MediaDetail;
+export default MediaDetail
