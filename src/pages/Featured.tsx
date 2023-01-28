@@ -1,18 +1,16 @@
-import { useEffect } from "react";
 import { VStack, IconButton, Heading, Flex, Box  } from '@chakra-ui/react'
 import { Search2Icon, StarIcon } from '@chakra-ui/icons'
-import { useFetchData, DEFAULT_TOKEN } from '../blocks/fetchHook';
 import { useNavigate } from "react-router-dom"
 
 import Header from '../blocks/Header';
-import MediaDetail, { MediaWithDetail } from "../blocks/MediaDetail";
+import MediaDetail from "../blocks/MediaDetail";
 
 
 const FEATURED_ITEMS = ['tt0266987','tt1340800']
 
 const FeaturedMedia = ({ mediaID }: { mediaID: string }) => {
   return (<Box
-    minW={{ base: '100%', sm: '50%' }}
+    maxW={{ base: '100%', sm: '50%' }}
     flexGrow='1'
   >
     <MediaDetail mediaID={mediaID} />

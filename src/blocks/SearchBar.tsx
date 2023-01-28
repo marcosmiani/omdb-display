@@ -1,16 +1,23 @@
-import { ChangeEventHandler, useRef, useEffect } from "react";
+import { ChangeEvent, useRef, useEffect, useState } from "react";
 import {
   Flex,
   Input,
   InputGroup,
   InputRightElement,
   Collapse,
+  FormControl,
+  FormLabel,
+  Switch,
   Heading
 } from '@chakra-ui/react'
 import { Search2Icon } from '@chakra-ui/icons'
 
-function Header({ search, onChange }: { search?: string, onChange?: ChangeEventHandler<HTMLInputElement> }) {
+export type PlotType = 'full' | 'short'
 
+function Header(
+  { search, plotType, onChange }:
+    { search: string, plotType: PlotType, onChange?: (value: string, plotType: PlotType) => void }
+) {
   const inputRef = useRef<HTMLInputElement>(null)
   useEffect(() => {
     inputRef?.current?.focus?.()
@@ -24,9 +31,30 @@ function Header({ search, onChange }: { search?: string, onChange?: ChangeEventH
             ref={inputRef}
             placeholder="Type your favourite move here"
             value={search}
-            onChange={onChange}
+            onChange={(evt: ChangeEvent<HTMLInputElement>) => {
+              const value = evt.target.value
+              onChange(value, plotType)
+            }}
           />
-          <InputRightElement children={<Search2Icon color='green.500' />} />
+          <InputRightElement
+            w='150px'
+            children={
+              <Flex flexDirection='row' minW={'100px'} alignItems='center'>  
+                <Search2Icon color='green.500' />
+                <FormControl display='flex' alignItems='center' ml='2'>
+                  <FormLabel htmlFor='plot-type' mb='0' fontSize='xs'>
+                    Full plot?
+                  </FormLabel>
+                  <Switch
+                    id='plot-type'
+                    size='sm'
+                    onChange={() => onChange(search, plotType === 'full' ? 'short' : 'full')}
+                    isChecked={plotType === 'full'} 
+                  />
+                </FormControl>
+              </Flex>
+            }
+          />
         </InputGroup>
       }
       <Collapse startingHeight={0} in={!search}>

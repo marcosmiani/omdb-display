@@ -26,6 +26,7 @@ export function useFetchData<DataType>(url: string, id?: string): FetchHookAPI<D
 
   const fetchData = () => {
     setLoading(true);
+    setError(undefined);
     debounce(() =>
       fetch(
         url

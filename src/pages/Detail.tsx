@@ -19,7 +19,7 @@ const MediaCard = () => {
       <Header>
         <IconButton aria-label='Go back' icon={<ArrowBackIcon />} onClick={() => {navigate(-1)}} variant={'ghost'}></IconButton>
       </Header>
-      <MediaDetail mediaID={params.imdbid} info='full' />
+      <MediaDetail mediaID={params.imdbid} display='full' plotType='full' />
     </Flex>
   );
 }

@@ -10,6 +10,9 @@ import {
   List,
   ListItem,
   ListIcon,
+  FormControl,
+  FormLabel,
+  Switch,
   IconButton
 } from "@chakra-ui/react";
 import { ViewOffIcon, ChevronDownIcon, ChevronUpIcon, StarIcon, EditIcon } from '@chakra-ui/icons'
@@ -18,6 +21,7 @@ import { useNavigate } from "react-router-dom";
 
 import { useFetchData, DEFAULT_TOKEN } from './fetchHook';
 import ErrorHandler from "./ErrorHandler";
+import { PlotType } from "./SearchBar";
 
 export type MediaWithDetail = { 
   Title: string,
@@ -49,9 +53,17 @@ export type MediaWithDetail = {
   Response?: string 
 }
 
+const baseTextPartStyle = {
+  minH: 5,
+  ml: { base: '0', sm: '5' },
+  mt: 0,
+  mb: 5,
+  w: { base: '50%' }
+}
+
 const Poster = ({ poster, title, loading }: { poster?: string, title?: string, loading?: boolean }) => {
   const [src, setSrc] = useState<string | undefined>(poster || '')
-
+  
   useEffect(() => {
     setSrc(poster)
   }, [poster])
@@ -73,6 +85,76 @@ const Poster = ({ poster, title, loading }: { poster?: string, title?: string, l
   </Box>)
 }
 
+const Writers = ({ writers, loading }: { writers?: string, loading: boolean }) => {
+  const writerCollection: string[] | undefined = writers?.split(/\,\s/ig)
+
+  return (<Skeleton 
+    sx={{
+      ...baseTextPartStyle,
+      w: { base: 'calc(50% - 16px)' },
+    }}
+    isLoaded={!loading}
+  >
+    <Text>Writer/s:</Text>
+    <List>{writerCollection?.map(writer => (
+      <ListItem key={writer}>
+        <ListIcon as={EditIcon}></ListIcon>
+        <Text as='span' fontSize='xs'>{writer}</Text>
+      </ListItem>
+    ))}</List>
+  </Skeleton>)
+}
+
+const Actors = ({ actors, loading }: { actors?: string, loading: boolean }) => {
+  const actorsCollection: string[] | undefined = actors?.split(/\,\s/ig)
+
+  return (<Skeleton
+    sx={{
+      ...baseTextPartStyle,
+      maxW: { base: 'calc(50% - 50px)' },
+      ml: 0,
+    }}
+    isLoaded={!loading}
+    >
+    <Text>Actors:</Text>
+    <List>{
+      actorsCollection?.map(actor => (
+        <ListItem key={actor}>
+          <ListIcon as={StarIcon}></ListIcon>
+          <Text as='span' fontSize='xs'>{actor}</Text>
+        </ListItem>
+    ))}</List>
+  </Skeleton>)
+}
+
+const Plot = (
+  { loading, plot, type = 'short' }:
+  { loading: boolean, plot?: string, type?: 'full' | 'short', onChangeType?: () => void }
+) => {
+  const [more, setMore] = useState<boolean>(false)
+
+  return (
+    <Skeleton sx={{
+      h: 'auto',
+      minW: { base: '100%', sm: 'calc(100% - 16px)' },
+      maxW: { base: '100%', sm: 'calc(100% - 16px)' },
+      minH: { base: '70px', md: '100px' },
+      mb: '16px'
+    }} isLoaded={!loading}>
+      <Text fontSize='sm' noOfLines={more || type === 'short' ? undefined : 4}>
+        {plot}
+      </Text>
+      <Flex justifyContent={'center'} alignItems='center' width='100%'>
+        {type !== 'short' && <IconButton
+          aria-label='See more / See less'
+          icon={more ? <ChevronUpIcon /> : <ChevronDownIcon />}
+          onClick={() => setMore(!more)}
+          variant={'ghost'}
+        />}
+      </Flex>
+    </Skeleton>)
+}
+
 const getColorByRate = (rate?: string) => {
   const rating = parseInt(rate || '0', 10)
   if (rating >= 7) return 'green'
@@ -80,28 +162,25 @@ const getColorByRate = (rate?: string) => {
   return 'red'
 }
 
-const baseTextPartStyle = {
-  minH: 5,
-  ml: { base: '0', sm: '5' },
-  mt: 0,
-  mb: 3,
-  minW: { base: '50%' }
-}
-
-const MediaDetail = ({ mediaID, info = 'basic' }: { mediaID?: string, info?: 'basic' | 'full' }) => {
+const MediaDetail = (
+  { mediaID, display = 'compact', plotType = 'short', forcedLoading = false }:
+  { mediaID?: string, display?: 'compact' | 'full', plotType?: PlotType, forcedLoading?: boolean }
+) => {
   // TODO Control errors: error handler component?
-  const [loading, error, media, getMedia] = useFetchData<MediaWithDetail>(
-    `https://www.omdbapi.com/?i=${mediaID}&plot=full&apiKey=${DEFAULT_TOKEN}`
+  const [mediaIsLoading, error, media, getMedia] = useFetchData<MediaWithDetail>(
+    `https://www.omdbapi.com/?i=${mediaID}&plot=${plotType}&apiKey=${DEFAULT_TOKEN}`
   )
 
-  const [more, setMore] = useState<boolean>(false)
   let navigate = useNavigate();
 
   useEffect(() => {
-    getMedia()
-  }, [])
+    if (mediaID && !forcedLoading) {
+      getMedia()
+    }
+  }, [plotType, mediaID, forcedLoading])
 
-  const fullInfo = info === 'full'
+  const fullDisplay = display === 'full'
+  const loading = !media || mediaIsLoading || forcedLoading
 
   return (
     <ErrorHandler error={error}>
@@ -110,12 +189,20 @@ const MediaDetail = ({ mediaID, info = 'basic' }: { mediaID?: string, info?: 'ba
         h={'100%'}
         wrap={'wrap'}
         alignItems={"start"}
+        justifyContent='start'
         minW={{base: '350px', sm: '450px'}}
         p='2'
       >
         <Poster title={media?.Title} poster={media?.Poster} loading={loading} />
         
-        <Flex w={{ base: '100%', sm: '60%' }} maxW={{ base: '500px'}} alignItems={"start"} flexDirection={'column'} flexGrow={1} mt='5'>
+        <Flex
+          w={{ base: '100%', sm: '60%' }}
+          maxW={{ base: '500px'}}
+          alignItems={"start"}
+          flexDirection={'column'}
+          flexGrow={1}
+          mt='5'
+        >
           <Skeleton sx={baseTextPartStyle} isLoaded={!loading}>
             <Heading
               size="lg"
@@ -142,49 +229,36 @@ const MediaDetail = ({ mediaID, info = 'basic' }: { mediaID?: string, info?: 'ba
           <Skeleton sx={baseTextPartStyle} isLoaded={!loading}>
             <Text>{media?.Awards}</Text>
           </Skeleton>
-          {fullInfo && <Skeleton sx={baseTextPartStyle} isLoaded={!loading}>
+          {fullDisplay && <Skeleton sx={baseTextPartStyle} isLoaded={!loading}>
             <Text>Director: {media?.Director}</Text>
           </Skeleton>}
-          {fullInfo && <Skeleton sx={baseTextPartStyle} isLoaded={!loading}>
-            <Text>Cast:</Text>
-            <List>{media?.Actors?.split(/\,\s/ig).map(actor => (
-              <ListItem key={actor}>
-                <ListIcon as={StarIcon}></ListIcon>
-                <Text as='span' fontSize='xs'>{actor}</Text>
-              </ListItem>
-            ))}</List>
-          </Skeleton>}
-          {fullInfo && <Skeleton sx={baseTextPartStyle} isLoaded={!loading}>
-            <Text>Writer/s:</Text>
-            <List>{media?.Writer?.split(/\,\s/ig).map(writer => (
-              <ListItem key={writer}>
-                <ListIcon as={EditIcon}></ListIcon>
-                <Text as='span' fontSize='xs'>{writer}</Text>
-              </ListItem>
-            ))}</List>
-          </Skeleton>}
-          
-          <Skeleton sx={{
-            ...baseTextPartStyle,
-            h: 'auto',
-            minW: { base: '100%', sm: 'calc(100% - 16px)' },
-            maxW: { base: '100%', sm: 'calc(100% - 16px)' },
-            minH: { base: '70px', md: '100px'},
-            mb: '16px'
-          }} isLoaded={!loading}>
-            <Text fontSize='sm' noOfLines={more ? undefined : 4}>
-              {media?.Plot}
-            </Text>
-            <Flex justifyContent={'center'} width='100%'>
-              <IconButton
-                aria-label='Go back'
-                icon={more ? <ChevronUpIcon /> : <ChevronDownIcon />}
-                onClick={() => setMore(!more)}
-                variant={'ghost'}
-              />
-            </Flex>
-          </Skeleton>
         </Flex>
+        {fullDisplay && <Flex
+          w={{ base: '100%' }}
+          alignItems={"start"}
+          flexDirection={'row'}
+          flexGrow={1}
+          mt='5'
+        >
+          <Actors actors={media?.Actors} loading={loading} />
+          <Writers writers={media?.Writer} loading={loading} />
+        </Flex>}
+        
+        <Flex
+          w={{ base: '100%' }}
+          h={{base: '100%' }}
+          alignItems={"start"}
+          flexDirection={'column'}
+          flexGrow={1}
+          mt='5'
+        >
+          <Plot
+            plot={media?.Plot}
+            loading={loading}
+            type={plotType}
+          />
+        </Flex>
+        
       </Flex>
     </ErrorHandler>
   );
