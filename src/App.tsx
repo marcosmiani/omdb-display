@@ -1,15 +1,15 @@
 import { Box } from '@chakra-ui/react'
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route } from 'react-router-dom'
 
-import Detail from './pages/Detail';
-import Search from './pages/Search';
-import Featured from './pages/Featured';
+import Detail from './pages/Detail'
+import Search from './pages/Search'
+import Featured from './pages/Featured'
 
-function NoMatch() {
+function NoMatch () {
   return <div>NOT FOUND</div>
 }
 
-function App() {
+function App () {
   return (
     <Box
       sx={{
@@ -20,14 +20,14 @@ function App() {
       }}
     >
       <Routes>
-        <Route path="/" element={<Featured />} />
-        <Route path="/search/" element={<Search />} />
-        <Route path="/search/:criteria" element={<Search />} />
-        <Route path="/detail/:imdbid" element={<Detail />} />
-        <Route path="*" element={<NoMatch />} />
+        <Route path='/' element={<Featured />} />
+        <Route path='/search/' element={<Search />} />
+        <Route path='/search/:criteria' element={<Search />} />
+        <Route path='/detail/:imdbid' element={<Detail />} />
+        <Route path='*' element={<NoMatch />} />
       </Routes>
     </Box>
-  );
+  )
 }
 
-export default App;
+export default App
