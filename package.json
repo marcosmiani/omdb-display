@@ -2,7 +2,10 @@
   "name": "omdb-display",
   "version": "0.0.1",
   "type": "module",
+  "homepage": "https://marcosmiani.github.io/omdb-display",
   "scripts": {
+    "predeploy": "yarn build",
+    "deploy": "gh-pages -d dist",
     "lint": "eslint './src/**/*.tsx' './src/**/*.ts'",
     "lint:fix": "eslint --fix './src/**/*.tsx' './src/**/*.ts'",
     "dev": "vite",
@@ -33,6 +36,7 @@
     "eslint-plugin-n": "^15.0.0",
     "eslint-plugin-promise": "^6.0.0",
     "eslint-plugin-react": "latest",
+    "gh-pages": "^5.0.0",
     "typescript": "*",
     "vite": "^4.0.4"
   }

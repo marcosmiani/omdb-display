@@ -1,4 +1,4 @@
-# omdb-display
+# [omdb-display](https://marcosmiani.github.io/omdb-display)
 Created with originally with CodeSandbox, moved to GitHub.
 
 Built with:
@@ -31,3 +31,5 @@ For local environment
 ### Build and use
 For build and later deploy somewhere
 `yarn build` and `yarn preview` (runs a server using the dist folder generated from the build)
+
+You can deploy using [git hub pages](https://create-react-app.dev/docs/deployment/#github-pages)
